@@ -1,5 +1,5 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:shared_preferences/shared_preferences.dart';
 
 class InscriptionPage extends StatefulWidget {
   const InscriptionPage({super.key});
@@ -11,12 +11,13 @@ class InscriptionPage extends StatefulWidget {
 class _InscriptionPageState extends State<InscriptionPage> {
   final TextEditingController txtLogin = TextEditingController();
   final TextEditingController txtPassword = TextEditingController();
+  bool _isLoading = false;
 
-  // --- les couleurs  ---
-  final Color primaryBrown = const Color(0xFF4E342E);
-  final Color accentBrown = const Color(0xFF8D6E63);
-  final Color lightBeige = const Color(0xFFF5F5DC);
-  final Color cardColor = const Color(0xFFFFFBF0);
+  // --- Palette Dark & Lime ---
+  final Color darkBackground = const Color(0xFF121212);
+  final Color surfaceColor = const Color(0xFF1E1E1E);
+  final Color limeAccent = const Color(0xFFC6FF00);
+  final Color textSecondary = const Color(0xFFB0B0B0);
 
   @override
   void dispose() {
@@ -28,128 +29,111 @@ class _InscriptionPageState extends State<InscriptionPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      // --- Bcakground de la page---
-      backgroundColor: lightBeige,
-      body: SingleChildScrollView( // Added scroll to prevent overflow with keyboard
+      backgroundColor: darkBackground,
+      body: SingleChildScrollView(
         child: Column(
           children: [
-            // --- ADDED: Decorative Header Section ---
             Container(
-              height: 250,
+              height: MediaQuery.of(context).size.height * 0.35,
               width: double.infinity,
               decoration: BoxDecoration(
-                color: primaryBrown,
-                borderRadius: const BorderRadius.only(
-                  bottomLeft: Radius.circular(60),
+                gradient: LinearGradient(
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
+                  colors: [surfaceColor, darkBackground],
                 ),
               ),
-              child: const Column(
-                mainAxisAlignment: MainAxisAlignment.center,//pour centrer
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  Icon(Icons.add_home, size: 80, color: Colors.white70), // Theme Icon
-                  SizedBox(height: 10),
-                  Text(
-                    "Créer un Compte",
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: limeAccent.withOpacity(0.1),
+                      shape: BoxShape.circle,
+                      border: Border.all(color: limeAccent, width: 2),
+                    ),
+                    child: Icon(Icons.person_add_alt_1, size: 60, color: limeAccent),
+                  ),
+                  const SizedBox(height: 20),
+                  const Text(
+                    "INSCRIPTION",
                     style: TextStyle(
                       color: Colors.white,
-                      fontSize: 28,
-                      fontWeight: FontWeight.bold,
+                      fontSize: 32,
+                      fontWeight: FontWeight.w900,
+                      letterSpacing: 2,
                     ),
+                  ),
+                  Text(
+                    "Rejoignez-nous dès maintenant",
+                    style: TextStyle(color: textSecondary, fontSize: 14),
                   ),
                 ],
               ),
             ),
-
-            const SizedBox(height: 30),
-
-            // --- UI Container for Inputs ---
+            const SizedBox(height: 10),
             Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 25),
+              padding: const EdgeInsets.symmetric(horizontal: 30),
               child: Column(
                 children: [
-                  // Champ d'utilisateur
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    child: TextFormField(
-                      controller: txtLogin,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        prefixIcon: Icon(Icons.person, color: accentBrown),
-                        hintText: "Utilisateur",
-                        // --- UPDATED: Brown Themed Borders ---
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide(color: accentBrown.withOpacity(0.3)),
-                        ),
-                      ),
-                    ),
+                  _buildTextField(
+                    controller: txtLogin,
+                    hint: "entrez-votre email",
+                    icon: Icons.email,
                   ),
-
-                  // Champ mot de passe
-                  Container(
-                    margin: const EdgeInsets.symmetric(vertical: 10),
-                    child: TextFormField(
-                      controller: txtPassword,
-                      obscureText: true,
-                      decoration: InputDecoration(
-                        filled: true,
-                        fillColor: Colors.white,
-                        prefixIcon: Icon(Icons.lock, color: accentBrown),
-                        hintText: "Mot de passe",
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide.none,
-                        ),
-                        enabledBorder: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(15),
-                          borderSide: BorderSide(color: accentBrown.withOpacity(0.3)),
-                        ),
-                      ),
-                    ),
-                  ),
-
                   const SizedBox(height: 20),
-
-                  // Bouton inscription
+                  _buildTextField(
+                    controller: txtPassword,
+                    hint: "entrez-votre mot de passe",
+                    icon: Icons.lock,
+                    isPassword: true,
+                  ),
+                  const SizedBox(height: 40),
                   SizedBox(
                     width: double.infinity,
+                    height: 55,
                     child: ElevatedButton(
                       style: ElevatedButton.styleFrom(
-                        padding: const EdgeInsets.symmetric(vertical: 15),
-                        backgroundColor: primaryBrown, // Brown Button
+                        backgroundColor: limeAccent,
+                        foregroundColor: Colors.black,
                         shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(15),
+                          borderRadius: BorderRadius.circular(12),
                         ),
-                        elevation: 5,
+                        elevation: 0,
                       ),
-                      onPressed: () => _onInscrire(context),
-                      child: const Text(
-                        "S'inscrire",
-                        style: TextStyle(color: Colors.white, fontSize: 18),
-                      ),
+                      onPressed: _isLoading ? null : () => _onInscrire(context),
+                      child: _isLoading
+                          ? const CircularProgressIndicator(color: Colors.black)
+                          : const Text(
+                              "CRÉER LE COMPTE",
+                              style: TextStyle(
+                                fontSize: 16,
+                                fontWeight: FontWeight.bold,
+                              ),
+                            ),
                     ),
                   ),
-
-                  const SizedBox(height: 15),
-
-                  // Lien hypertexte
-                  TextButton(
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/authentification');
-                    },
-                    child: Text(
-                      "J'ai déjà un compte",
-                      style: TextStyle(
-                        fontSize: 16.0,
-                        color: accentBrown, // Subtle brown link
-                        fontWeight: FontWeight.w600,
+                  const SizedBox(height: 25),
+                  Wrap(
+                    alignment: WrapAlignment.center,
+                    crossAxisAlignment: WrapCrossAlignment.center,
+                    children: [
+                      Text("Vous avez déjà un compte ?",
+                          style: TextStyle(color: textSecondary)),
+                      TextButton(
+                        onPressed: () {
+                          Navigator.pop(context);
+                        },
+                        child: Text(
+                          "Se connecter",
+                          style: TextStyle(
+                            color: limeAccent,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
                       ),
-                    ),
+                    ],
                   ),
                 ],
               ),
@@ -160,20 +144,93 @@ class _InscriptionPageState extends State<InscriptionPage> {
     );
   }
 
+  Widget _buildTextField({
+    required TextEditingController controller,
+    required String hint,
+    required IconData icon,
+    bool isPassword = false,
+  }) {
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword,
+      style: const TextStyle(color: Colors.white),
+      decoration: InputDecoration(
+        filled: true,
+        fillColor: surfaceColor,
+        hintText: hint,
+        hintStyle: TextStyle(color: textSecondary),
+        prefixIcon: Icon(icon, color: limeAccent, size: 20),
+        contentPadding: const EdgeInsets.symmetric(vertical: 18),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide.none,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: Colors.white.withOpacity(0.05)),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(12),
+          borderSide: BorderSide(color: limeAccent.withOpacity(0.5)),
+        ),
+      ),
+    );
+  }
+
   Future<void> _onInscrire(BuildContext context) async {
-    final SharedPreferences prefs = await SharedPreferences.getInstance();
-    if (txtLogin.text.isNotEmpty && txtPassword.text.isNotEmpty) {
-      prefs.setString("login", txtLogin.text);
-      prefs.setString("password", txtPassword.text);
-      prefs.setBool("connect", true);
-      Navigator.pushNamed(context, '/home');
-    } else {
-      // --- UPDATED: Snackbar color to match theme ---
-      final snackBar = SnackBar(
-        backgroundColor: accentBrown,
-        content: const Text('Veuillez remplir tous les champs'),
+    if (txtLogin.text.isEmpty || txtPassword.text.isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.redAccent,
+          content: Text('Veuillez remplir tous les champs'),
+        ),
       );
-      ScaffoldMessenger.of(context).showSnackBar(snackBar);
+      return;
+    }
+
+    setState(() {
+      _isLoading = true;
+    });
+
+    try {
+      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: txtLogin.text.trim(),
+        password: txtPassword.text.trim(),
+      );
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: limeAccent,
+            content: const Text('Compte créé avec succès !', style: TextStyle(color: Colors.black)),
+          ),
+        );
+        Navigator.of(context).popUntil((route) => route.isFirst);
+      }
+    } on FirebaseAuthException catch (e) {
+      String message = "Une erreur est survenue";
+      if (e.code == 'weak-password') {
+        message = 'Le mot de passe est trop faible';
+      } else if (e.code == 'email-already-in-use') {
+        message = 'Cet email est déjà utilisé';
+      } else if (e.code == 'invalid-email') {
+        message = 'Email invalide';
+      }
+
+      if (mounted) {
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(
+            backgroundColor: Colors.redAccent,
+            content: Text(message),
+          ),
+        );
+      }
+    } finally {
+      if (mounted) {
+        setState(() {
+          _isLoading = false;
+        });
+      }
     }
   }
 }
