@@ -111,6 +111,15 @@ class HomePage extends StatelessWidget {
                       ),
                       _buildImageModule(
                         context,
+                        "Calories",
+                        'images/food.jpg', // You might want to use a food image later
+                        '/food_scanner',
+                        surfaceColor,
+                        primaryColor,
+                        textColor,
+                      ),
+                      _buildImageModule(
+                        context,
                         "Historic",
                         'images/I-love-gym-M.jpg',
                         '/historique',

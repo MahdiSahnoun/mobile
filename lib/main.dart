@@ -9,6 +9,7 @@ import 'package:mini_projet/Page/screens/pose_camera_screen.dart';
 import 'package:mini_projet/Page/historique.page.dart';
 import 'package:mini_projet/Page/parametre.page.dart';
 import 'package:mini_projet/Page/servives/theme_service.dart';
+import 'package:mini_projet/Page/food_scanner.page.dart';
 
 // Global notifier for theme
 final themeNotifier = ThemeNotifier(true);
@@ -53,6 +54,7 @@ class MyApp extends StatelessWidget {
             '/pose_camera': (context) => const PoseCameraScreen(),
             '/historique': (context) => const HistoriquePage(),
             '/parametres': (context) => const ParametrePage(),
+            '/food_scanner': (context) => const FoodScannerPage(),
           },
         );
       },

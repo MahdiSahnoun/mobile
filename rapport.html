@@ -1,0 +1,353 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rapport Technique - My_Gym App</title>
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Fira+Code:wght@400;500&display=swap" rel="stylesheet">
+    <!-- Prism.js for Syntax Highlighting -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/themes/prism-tomorrow.min.css" rel="stylesheet" />
+    <style>
+        :root {
+            --primary: #C6FF00; /* Lime */
+            --bg-dark: #121212;
+            --surface: #1E1E1E;
+            --text-main: #FFFFFF;
+            --text-dim: #B0B0B0;
+            --accent: #FFD700;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            margin: 0;
+            line-height: 1.6;
+            scroll-behavior: smooth;
+        }
+
+        /* Navigation Sidebar */
+        nav {
+            position: fixed;
+            left: 0;
+            top: 0;
+            bottom: 0;
+            width: 280px;
+            background: var(--surface);
+            padding: 40px 20px;
+            overflow-y: auto;
+            border-right: 1px solid rgba(255,255,255,0.05);
+            z-index: 100;
+        }
+
+        nav h1 {
+            color: var(--primary);
+            font-size: 24px;
+            font-weight: 800;
+            margin-bottom: 30px;
+            letter-spacing: 1px;
+        }
+
+        nav ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        nav li { margin-bottom: 12px; }
+
+        nav a {
+            color: var(--text-dim);
+            text-decoration: none;
+            font-size: 14px;
+            font-weight: 500;
+            transition: 0.3s;
+            display: block;
+            padding: 8px 12px;
+            border-radius: 8px;
+        }
+
+        nav a:hover, nav a.active {
+            color: var(--primary);
+            background: rgba(198, 255, 0, 0.1);
+        }
+
+        /* Main Content */
+        main {
+            margin-left: 320px;
+            padding: 60px 50px;
+            max-width: 1000px;
+        }
+
+        section {
+            margin-bottom: 80px;
+            padding-top: 20px;
+        }
+
+        h2 {
+            color: var(--primary);
+            font-size: 32px;
+            font-weight: 800;
+            border-bottom: 2px solid var(--primary);
+            display: inline-block;
+            margin-bottom: 40px;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            color: var(--accent);
+            font-size: 22px;
+            margin-top: 30px;
+        }
+
+        /* Executive Summary Card */
+        .exec-summary {
+            background: linear-gradient(135deg, var(--surface) 0%, #252525 100%);
+            padding: 30px;
+            border-radius: 20px;
+            border: 1px solid rgba(198, 255, 0, 0.2);
+            margin-bottom: 50px;
+        }
+
+        .badge {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 11px;
+            font-weight: 800;
+            text-transform: uppercase;
+            margin-right: 8px;
+            letter-spacing: 0.5px;
+        }
+
+        .bg-mlkit { background: #4285F4; color: white; }
+        .bg-firebase { background: #FFCA28; color: black; }
+        .bg-flutter { background: #02569B; color: white; }
+        .bg-camera { background: #E91E63; color: white; }
+
+        .card {
+            background: var(--surface);
+            padding: 25px;
+            border-radius: 16px;
+            margin-top: 20px;
+            border: 1px solid rgba(255,255,255,0.05);
+        }
+
+        code { font-family: 'Fira Code', monospace; }
+
+        pre[class*="language-"] {
+            border-radius: 12px;
+            margin: 20px 0;
+            font-size: 14px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            text-align: left;
+            padding: 12px;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+        }
+
+        th { color: var(--primary); font-size: 13px; text-transform: uppercase; }
+
+        @media (max-width: 900px) {
+            nav { display: none; }
+            main { margin-left: 0; padding: 30px; }
+        }
+    </style>
+</head>
+<body>
+
+<nav>
+    <h1>MY_GYM <span style="color:white">DOC</span></h1>
+    <ul>
+        <li><a href="#overview">1. Vue d'ensemble</a></li>
+        <li><a href="#mlkit">2. ML Kit Analysis</a></li>
+        <li><a href="#camera">3. Logique Caméra</a></li>
+        <li><a href="#painter">4. Pose Painter</a></li>
+        <li><a href="#screen">5. Pose Screen</a></li>
+        <li><a href="#auth">6. Authentification</a></li>
+        <li><a href="#services">7. Dossier Services</a></li>
+        <li><a href="#database">8. Modèle de Données</a></li>
+        <li><a href="#critical">9. Passages Critiques</a></li>
+    </ul>
+</nav>
+
+<main>
+    <div class="exec-summary">
+        <span class="badge bg-flutter">Flutter 3.10+</span>
+        <span class="badge bg-firebase">Firebase Core 3.11</span>
+        <span class="badge bg-mlkit">ML Kit Pose Detection</span>
+        <h1 style="margin-top:15px; font-weight: 800; font-size: 42px;">RAPPORT TECHNIQUE D'ANALYSE</h1>
+        <p style="color: var(--text-dim); font-size: 18px;">
+            <b>My_Gym</b> est une application mobile d'entraînement assistée par Intelligence Artificielle. 
+            Elle utilise la vision par ordinateur en temps réel pour compter les répétitions d'exercices (Squats) 
+            et synchronise les performances des utilisateurs via Firebase Realtime Database.
+        </p>
+    </div>
+
+    <!-- SECTION 1 -->
+    <section id="overview">
+        <h2>1. Vue d'ensemble du Projet</h2>
+        <p>L'architecture suit un modèle modulaire découplant l'interface utilisateur, la logique métier (services) et le rendu graphique (painters).</p>
+        
+        <div class="card">
+            <h3>Pages & Écrans</h3>
+            <table>
+                <tr><th>Page</th><th>Responsabilité</th></tr>
+                <tr><td><b>Authentification</b></td><td>Gestion du login et redirection intelligente après succès.</td></tr>
+                <tr><td><b>Inscription</b></td><td>Création de nouveaux comptes via Firebase Auth.</td></tr>
+                <tr><td><b>Home</b></td><td>Hub central affichant les modules d'entraînement et d'historique.</td></tr>
+                <tr><td><b>Pose Camera</b></td><td>Écran critique utilisant ML Kit et le flux caméra temps réel.</td></tr>
+                <tr><td><b>Historique</b></td><td>Tableau de bord interactif avec vue hebdomadaire cliquable.</td></tr>
+                <tr><td><b>Paramètres</b></td><td>Gestion de l'apparence (Thème Dark/Lime ou Clair).</td></tr>
+            </table>
+        </div>
+        
+        <h3>Navigation</h3>
+        <p>L'application utilise un système de <b>Named Routes</b> défini dans <code>main.dart</code>. La navigation latérale est assurée par un <code>MyDrawer</code> persistant, tandis que la déconnexion gère le nettoyage complet de la pile de navigation (Stack).</p>
+    </section>
+
+    <!-- SECTION 2 -->
+    <section id="mlkit">
+        <h2>2. ML Kit — Analyse Approfondie</h2>
+        <p><span class="badge bg-mlkit">SERVICE : Pose Detection</span></p>
+        <p>Le projet utilise exclusivement le service <b>Google ML Kit Pose Detection</b>. Ce service utilise un réseau de neurones profonds pour identifier 33 points clés (landmarks) du corps humain.</p>
+        
+        <div class="card">
+            <h3>Fonctionnement Technique</h3>
+            <p>Le détecteur traite un objet <code>InputImage</code> et retourne une liste de <code>Pose</code>. Chaque pose contient des <code>PoseLandmark</code> avec des coordonnées (x, y) et un score de confiance.</p>
+            <pre class="language-dart"><code>// Configuration du service dans pose_deection_service.dart
+final options = PoseDetectorOptions(
+  mode: PoseDetectionMode.stream, // Optimisé pour le flux vidéo continu
+  model: PoseDetectionModel.accurate, // Précision maximale pour le calcul d'angles
+);</code></pre>
+        </div>
+
+        <h3>Traitement des résultats</h3>
+        <p>Les résultats sont envoyés au <code>ExerciseCounterService</code> pour la logique métier et au <code>PosePainter</code> pour l'affichage graphique.</p>
+    </section>
+
+    <!-- SECTION 3 -->
+    <section id="camera">
+        <h2>3. Caméra — Logique Complète</h2>
+        <p><span class="badge bg-camera">PACKAGE : camera ^0.12.0</span></p>
+        
+        <div class="card">
+            <h3>Le Pipeline Caméra</h3>
+            <ol>
+                <li><b>Initialisation :</b> Le <code>CameraController</code> est configuré avec <code>ResolutionPreset.medium</code> pour équilibrer fluidité et charge CPU.</li>
+                <li><b>Stream d'Images :</b> La méthode <code>startImageStream</code> capture les frames à environ 30 FPS.</li>
+                <li><b>Format des Pixels :</b> Sur Android, le format utilisé est <b>NV21</b> (YUV420), optimisé pour ML Kit.</li>
+            </ol>
+        </div>
+
+        <h3>Conversion CameraImage → InputImage</h3>
+        <p>C'est l'étape la plus critique techniquement. On extrait les <b>bytes</b> du premier plan de l'image (Y) pour les transformer en données exploitables par l'IA.</p>
+        <pre class="language-dart"><code>// Code clé de conversion dans pose_camera_screen.dart
+return InputImage.fromBytes(
+  bytes: image.planes[0].bytes, // Données brutes de la frame
+  metadata: InputImageMetadata(
+    size: Size(image.width.toDouble(), image.height.toDouble()),
+    rotation: rotation, // Rotation basée sur le capteur (ex: 270°)
+    format: format, // NV21 ou BGRA8888
+    bytesPerRow: image.planes[0].bytesPerRow,
+  ),
+);</code></pre>
+    </section>
+
+    <!-- SECTION 4 -->
+    <section id="painter">
+        <h2>4. pose_painter.dart</h2>
+        <p>Ce fichier gère la couche de <b>Réalité Augmentée</b> (AR) simplifiée en dessinant le squelette sur la preview.</p>
+        
+        <div class="card">
+            <h3>Logique de Dessin</h3>
+            <p>Il utilise <code>canvas.drawLine</code> pour relier les articulations selon une liste de connexions prédéfinies (épaules -> coudes -> poignets).</p>
+            <pre class="language-dart"><code>// Gestion de l'effet miroir (Caméra Frontale)
+Offset _scale(PoseLandmark landmark, Size canvasSize) {
+  final double x = landmark.x * canvasSize.width / imageSize.width;
+  final double y = landmark.y * canvasSize.height / imageSize.height;
+  
+  // Inverse l'axe X si frontale pour que le dessin suive le mouvement utilisateur
+  return Offset(isFrontCamera ? canvasSize.width - x : x, y);
+}</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 5 -->
+    <section id="auth">
+        <h2>5. Authentification Firebase</h2>
+        <div class="card">
+            <p>L'app utilise un flux hybride basé sur <code>authStateChanges()</code>.</p>
+            <ul>
+                <li><b>Connexion :</b> <code>signInWithEmailAndPassword</code>.</li>
+                <li><b>Redirection :</b> Utilisation de <code>Navigator.popUntil</code> pour laisser le <code>StreamBuilder</code> de la racine switcher l'UI.</li>
+                <li><b>Déconnexion :</b> Nettoyage complet de la stack pour empêcher le retour arrière après logout.</li>
+            </ul>
+        </div>
+    </section>
+
+    <!-- SECTION 6 -->
+    <section id="services">
+        <h2>6. Services & Logique Métier</h2>
+        <div class="card">
+            <h3>ExerciseCounterService (Algorithme Squat)</h3>
+            <p>Utilise la trigonométrie pour compter les répétitions.</p>
+            <pre class="language-dart"><code>// Calcul de l'angle du genou (Hanche-Genou-Cheville)
+final angle = _calculateAngle(leftHip, leftKnee, leftAnkle);
+
+if (angle < 90 && !_isDown) _isDown = true; // Phase descendante
+if (angle > 160 && _isDown) { // Phase remontée validée
+    _isDown = false;
+    _repCount++;
+}</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 7 -->
+    <section id="database">
+        <h2>7. Realtime Database — Modèle</h2>
+        <p>Récemment migré pour plus de réactivité, le modèle est structuré en arborescence JSON.</p>
+        <div class="card">
+            <pre class="language-json"><code>{
+  "users": {
+    "UID_USER": {
+      "profileImageUrl": "https://...",
+      "history": {
+        "unique_id": {
+          "exercise": "Squats",
+          "reps": 15,
+          "durationMinutes": 2,
+          "date": "2026-05-08T..."
+        }
+      }
+    }
+  }
+}</code></pre>
+        </div>
+    </section>
+
+    <!-- SECTION 8 -->
+    <section id="critical">
+        <h2>8. Passages Critiques (Top 3)</h2>
+        <div class="card">
+            <p><b>1. UI Thread Management :</b> L'utilisation du flag <code>_isProcessing</code> dans le stream caméra évite de saturer le processeur avec trop de frames simultanées.</p>
+            <p><b>2. StreamBuilder Architecture :</b> Dans le Drawer, l'utilisation d'un Stream sur Firestore/RTDB garantit que la photo de profil est toujours synchronisée sans rechargement manuel.</p>
+            <p><b>3. Custom Coordinate Scaling :</b> La logique dans <code>PosePainter</code> qui adapte les coordonnées ML Kit (basées sur la frame brute) à la taille réelle du widget Flutter à l'écran.</p>
+        </div>
+    </section>
+</main>
+
+<!-- Prism.js -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/prism.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-dart.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/prism/1.29.0/components/prism-json.min.js"></script>
+
+</body>
+</html>

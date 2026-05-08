@@ -125,9 +125,15 @@ class _MyDrawerState extends State<MyDrawer> {
                   textColor: theme.colorScheme.onSurface,
                 ),
                 _buildDrawerItem(
+                  icon: Icons.fastfood_rounded,
+                  title: 'Calories',
+                  onTap: () => Navigator.popAndPushNamed(context, '/food_scanner'),
+                  accentColor: primaryAccent,
+                  textColor: theme.colorScheme.onSurface,
+                ),
+                _buildDrawerItem(
                   icon: Icons.history_rounded,
-                  title: 'Historic',
-                  onTap: () => Navigator.popAndPushNamed(context, '/historique'),
+                  title: 'Historic',                  onTap: () => Navigator.popAndPushNamed(context, '/historique'),
                   accentColor: primaryAccent,
                   textColor: theme.colorScheme.onSurface,
                 ),
